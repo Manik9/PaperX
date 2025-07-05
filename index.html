@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graded Paper Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body class="font-sans">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const GradedPaper = () => {
+      const studentName = "John Doe";
+      const className = "B.Tech II Year II Semester - CSE";
+      const teacher = "Prof. Alice Smith";
+      const subject = "Computer Organization";
+      const paperName = `${subject} - ${className}`;
+      const totalMarks = 38; // Sum of all grades
+      const maxMarks = 50; // Sum of all maximumMarks
+      const gradingTime = "15 minutes";
+      const currentDateTime = "08:25 PM PDT, Friday, July 04, 2025";
+
+      const grades = [
+        { question: "Difference Between Privileged and Non-Privileged instructions", grade: 2, maxMarks: 2, suggestions: "Good explanation, include an extra example of a non-privileged instruction for full marks." },
+        { question: "logic of Non-Restoring Division", grade: 2, maxMarks: 2, suggestions: "Solid logic, adding a numerical example would make it perfect." },
+        { question: "State the write policies.", grade: 2, maxMarks: 2, suggestions: "Well done, a quick note on trade-offs could push it to the max." },
+        { question: "Define pipelining.", grade: 2, maxMarks: 2, suggestions: "Nice analogy, listing pipeline stages would complete it." },
+        { question: "Draw Memory Hierarchy.", grade: 2, maxMarks: 2, suggestions: "Perfect hierarchy description, no changes needed." },
+        { question: "Multiply 1011 with 1001 using Booth's algorithm. Show all the registers content for each step.", grade: 3, maxMarks: 4, suggestions: "Good start, adding full step-by-step register details will get you the remaining mark." },
+        { question: "Write an algorithm to multiply binary numbers represented in normalized floating-point mode.", grade: 4, maxMarks: 4, suggestions: "Excellent, no improvements needed." },
+        { question: "Analyse the operation of DMA controller with block diagram.", grade: 7, maxMarks: 8, suggestions: "Great explanation, a simple diagram description could earn the last mark." },
+        { question: "What are the different-types of mapping techniques used in the usage of cache memory? Explain.", grade: 7, maxMarks: 8, suggestions: "Good coverage, an example for each type will secure the full 8 marks." },
+        { question: "Explain pipeline for floating point addition and subtraction.", grade: 7, maxMarks: 8, suggestions: "Well-explained, an example or hazard note could get you the last mark." },
+        { question: "Examine the Flynn's Classification in detail.", grade: 7, maxMarks: 8, suggestions: "Good breakdown, a comparison table or modern use case will complete it." },
+      ];
+
+      const weakAreas = grades.filter(q => q.grade < q.maxMarks).map(q => q.question);
+      const improvementTips = "Focus on providing detailed examples and diagrams where required, especially for algorithmic and technical questions like Booth's algorithm and DMA operation. Practice breaking down complex processes step-by-step to maximize marks.";
+
+      const [chartInstance, setChartInstance] = useState(null);
+
+      useEffect(() => {
+        if (chartInstance) {
+          chartInstance.destroy();
+        }
+        const ctx = document.getElementById('pieChart').getContext('2d');
+        const newChartInstance = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: ['Math', 'Science', 'Computer', 'History'],
+            datasets: [{
+              data: [25, 30, 35, 10],
+              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+        setChartInstance(newChartInstance);
+      }, []);
+
+      return (
+        <div className="container mx-auto p-6">
+          <header className="bg-white shadow-lg rounded-lg p-6 mb-6 border-b-4 border-indigo-500">
+            <div className="flex items-center">
+              <img src="https://via.placeholder.com/100" alt="Student Photo" className="w-24 h-24 rounded-full mr-6 border-4 border-white shadow-md" />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800">{paperName}</h1>
+                <p className="text-gray-600">Student: {studentName}</p>
+                <p className="text-gray-600">Class: {className}</p>
+                <p className="text-gray-600">Teacher: {teacher}</p>
+                <p className="text-gray-600">Subject: {subject}</p>
+                <p className="text-gray-600">Total Marks: {totalMarks} / {maxMarks}</p>
+                <p className="text-gray-600">Grading Time: {gradingTime}</p>
+                <p className="text-gray-600">Date & Time: {currentDateTime}</p>
+              </div>
+            </div>
+          </header>
+
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {grades.map((item, index) => (
+              <div key={index} className="bg-white card-hover rounded-lg p-6 border-l-4 border-blue-400 shadow-md hover:bg-blue-50 transition-all duration-300">
+                <h2 className="text-xl font-semibold text-gray-700">{item.question}</h2>
+                <p className="text-gray-600 mt-2">Marks: {item.grade} / {item.maxMarks}</p>
+                <p className="text-gray-500 mt-2 italic">{item.suggestions}</p>
+              </div>
+            ))}
+          </section>
+
+          <div className="mt-6 bg-white shadow-lg rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-700">Performance Overview</h2>
+            <div className="h-64">
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+
+          <footer className="bg-white shadow-lg rounded-lg p-6 mt-6 border-t-4 border-purple-500">
+            <h2 className="text-xl font-semibold text-gray-700">Areas for Improvement</h2>
+            <p className="text-gray-600 mt-2">Weak Areas: {weakAreas.join(", ")}</p>
+            <p className="text-gray-600 mt-2">Improvement Tips: {improvementTips}</p>
+          </footer>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<GradedPaper />, document.getElementById('root'));
+  </script>
+</body>
+</html>
